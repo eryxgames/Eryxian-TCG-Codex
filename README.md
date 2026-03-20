@@ -2,7 +2,7 @@
 
 A fast, data-driven single-page card browser for the Eryxian Legacy TCG. Runs entirely in the browser with no build step, no server, no dependencies beyond Font Awesome. Designed for GitHub Pages.
 
-![Eryxian TCG](https://eryxian.com)
+![Eryxian TCG](assets/small-forgelogo.png)
 
 ---
 
