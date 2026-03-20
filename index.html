@@ -1,0 +1,2085 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Eryxian Legacy TCG — Card Codex</title>
+<meta name="description" content="Full card database for Eryxian Legacy TCG by Daniel Sandner. Browse, search and filter all cards by faction, type, stats and keywords.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+/* ═══════════════════════════════════════════════════════════════════════════
+   ERYXIAN TCG CODEX — DESIGN TOKENS
+═══════════════════════════════════════════════════════════════════════════ */
+:root {
+  --bg:           #080a10;
+  --surface:      #0d0f18;
+  --surface2:     #111420;
+  --surface3:     #161925;
+  --border:       rgba(255,255,255,0.08);
+  --border2:      rgba(255,255,255,0.14);
+  --text:         #d0d0dc;
+  --text-muted:   rgba(255,255,255,0.38);
+  --text-dim:     rgba(255,255,255,0.22);
+  --accent:       #7B61FF;
+  --accent2:      #5a45dd;
+  --mono:         'JetBrains Mono', 'Fira Mono', 'Consolas', monospace;
+  --sans:         -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --radius:       8px;
+  --radius-lg:    12px;
+  --sidebar-w:    240px;
+  --transition:   0.18s ease;
+}
+
+/* ── Reset ─────────────────────────────────────────────────────────────── */
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.6;
+  min-height: 150vh;
+  overflow-x: hidden;
+}
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { opacity: 0.8; }
+button { cursor: pointer; font-family: inherit; }
+input, select { font-family: inherit; }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   HEADER
+═══════════════════════════════════════════════════════════════════════════ */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(8,10,16,0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 1.5rem;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.site-header__logo {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+}
+
+.site-header__title {
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: #fff;
+  line-height: 1;
+}
+
+.site-header__sub {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  opacity: 0.7;
+}
+
+.site-header__search {
+  flex: 1;
+  max-width: 420px;
+  margin-left: auto;
+  position: relative;
+}
+
+.site-header__search input {
+  width: 100%;
+  height: 34px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  padding: 0 12px 0 34px;
+  font-size: 13px;
+  outline: none;
+  transition: border-color var(--transition);
+}
+
+.site-header__search input:focus { border-color: var(--accent); }
+.site-header__search input::placeholder { color: var(--text-dim); }
+
+.site-header__search .search-icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-dim);
+  font-size: 12px;
+  pointer-events: none;
+}
+
+.header-count {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text-dim);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.header-count span { color: var(--text-muted); }
+
+.btn-icon {
+  width: 34px; height: 34px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text-muted);
+  font-size: 14px;
+  display: flex; align-items: center; justify-content: center;
+  transition: all var(--transition);
+  flex-shrink: 0;
+}
+
+.btn-icon:hover { border-color: var(--border2); color: var(--text); }
+.btn-icon.active { border-color: var(--accent); color: var(--accent); background: rgba(123,97,255,0.1); }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   LAYOUT
+═══════════════════════════════════════════════════════════════════════════ */
+.app-layout {
+  display: flex;
+  min-height: calc(100vh - 56px);
+}
+
+/* ── Sidebar ─────────────────────────────────────────────────────────── */
+.sidebar {
+  width: var(--sidebar-w);
+  flex-shrink: 0;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  padding: 1rem 0;
+  overflow-y: auto;
+  position: sticky;
+  top: 56px;
+  height: calc(100vh - 56px);
+  scrollbar-width: thin;
+  scrollbar-color: rgba(123,97,255,0.2) transparent;
+}
+
+.sidebar::-webkit-scrollbar { width: 4px; }
+.sidebar::-webkit-scrollbar-thumb { background: rgba(123,97,255,0.2); border-radius: 2px; }
+
+.sidebar.collapsed { width: 0; overflow: hidden; padding: 0; border: none; }
+
+.filter-section {
+  padding: 0 12px 16px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 4px;
+}
+
+.filter-section:last-child { border-bottom: none; }
+
+.filter-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: .13em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  padding: 12px 0 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.filter-clear {
+  font-size: 9px;
+  color: var(--accent);
+  background: none;
+  border: none;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity var(--transition);
+  padding: 0;
+  letter-spacing: .05em;
+}
+
+.filter-clear.visible { opacity: 1; }
+
+/* Faction pills */
+.faction-pills {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.faction-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 8px;
+  border-radius: 5px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 12px;
+  font-family: var(--sans);
+  text-align: left;
+  transition: all var(--transition);
+  width: 100%;
+}
+
+.faction-pill:hover {
+  background: var(--surface2);
+  color: var(--text);
+}
+
+.faction-pill.active {
+  border-color: var(--pill-color, var(--accent));
+  background: color-mix(in srgb, var(--pill-color, var(--accent)) 12%, transparent);
+  color: var(--pill-color, var(--accent));
+}
+
+.faction-pill__dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--pill-color, #666);
+  flex-shrink: 0;
+}
+
+.faction-pill__count {
+  margin-left: auto;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text-dim);
+}
+
+/* Checkbox filters */
+.check-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.check-item {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 4px 6px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  color: var(--text-muted);
+  transition: background var(--transition), color var(--transition);
+  user-select: none;
+}
+
+.check-item:hover { background: var(--surface2); color: var(--text); }
+.check-item.active { color: var(--text); }
+
+.check-box {
+  width: 13px; height: 13px;
+  border: 1px solid var(--border2);
+  border-radius: 3px;
+  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 9px;
+  color: transparent;
+  transition: all var(--transition);
+}
+
+.check-item.active .check-box {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+.check-count {
+  margin-left: auto;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text-dim);
+}
+
+/* Stat range filters */
+.range-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.range-field {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.range-field label {
+  font-size: 9px;
+  color: var(--text-dim);
+  letter-spacing: .05em;
+  text-transform: uppercase;
+}
+
+.range-field input {
+  width: 100%;
+  height: 28px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text);
+  padding: 0 6px;
+  font-size: 12px;
+  font-family: var(--mono);
+  outline: none;
+  transition: border-color var(--transition);
+}
+
+.range-field input:focus { border-color: var(--accent); }
+.range-field input::placeholder { color: var(--text-dim); }
+
+/* Sort */
+.sort-select {
+  width: 100%;
+  height: 30px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text);
+  padding: 0 8px;
+  font-size: 12px;
+  outline: none;
+  cursor: pointer;
+  transition: border-color var(--transition);
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='rgba(255,255,255,0.3)'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  padding-right: 24px;
+}
+
+.sort-select:focus { border-color: var(--accent); }
+
+/* Reset button */
+.btn-reset {
+  width: 100%;
+  height: 32px;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text-muted);
+  font-size: 12px;
+  letter-spacing: .04em;
+  transition: all var(--transition);
+  margin-top: 4px;
+}
+
+.btn-reset:hover { border-color: var(--border2); color: var(--text); background: var(--surface2); }
+
+/* ── Main content ────────────────────────────────────────────────────── */
+.main-content {
+  flex: 1;
+  padding: 1.25rem;
+  min-width: 0;
+}
+
+/* ── Active filters bar ──────────────────────────────────────────────── */
+.active-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 1rem;
+  min-height: 0;
+}
+
+.active-filters:empty { display: none; }
+
+.filter-tag {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 8px;
+  background: rgba(123,97,255,0.12);
+  border: 1px solid rgba(123,97,255,0.3);
+  border-radius: 99px;
+  font-size: 11px;
+  color: rgba(180,160,255,0.9);
+  font-family: var(--mono);
+  letter-spacing: .03em;
+}
+
+.filter-tag__remove {
+  background: none;
+  border: none;
+  color: inherit;
+  opacity: 0.6;
+  font-size: 11px;
+  padding: 0;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.filter-tag__remove:hover { opacity: 1; }
+
+/* ── Cards grid ──────────────────────────────────────────────────────── */
+.cards-grid {
+  padding: 4px;          /* add this — gives hover room */
+  overflow: visible;     /* ensure parent isn't clipping */
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1rem;
+  transition: opacity .2s ease;
+}
+
+.cards-grid.is-list {
+  grid-template-columns: 1fr;
+}
+
+.cards-grid.loading { opacity: 0.4; pointer-events: none; }
+
+/* Empty state */
+.empty-state {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 4rem 2rem;
+  color: var(--text-dim);
+}
+
+.empty-state__icon { font-size: 2.5rem; margin-bottom: 1rem; opacity: 0.4; }
+.empty-state__title { font-size: 1.1rem; color: var(--text-muted); margin-bottom: .5rem; }
+.empty-state__sub { font-size: 13px; }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   CARD COMPONENT
+═══════════════════════════════════════════════════════════════════════════ */
+.card {
+  background: #0d0f18;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
+  position: relative;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 32px rgba(0,0,0,0.5);
+  border-color: rgba(255,255,255,0.14);
+}
+
+/* Art area */
+.card__art {
+  position: relative;
+  aspect-ratio: 3/4;
+  background: #060810;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.card__art img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform .35s ease;
+}
+
+.card:hover .card__art img { transform: scale(1.04); }
+
+/* Placeholder when no image */
+.card__art-placeholder {
+  width: 100%; height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  color: var(--text-dim);
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .06em;
+}
+
+.card__art-placeholder i { font-size: 24px; opacity: 0.25; }
+
+/* Frame overlay */
+.card__frame {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  display: block;
+  pointer-events: none;
+  z-index: 3;
+  opacity: 1 !important;
+}
+
+/* Faction badge */
+.card__faction-badge {
+  position: absolute;
+  top: 8px; right: 8px;
+  z-index: 5;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  padding: 2px 7px;
+  border-radius: 3px;
+  font-family: var(--mono);
+}
+
+/* Type badge (bottom-left of art) */
+.card__type-badge {
+  position: absolute;
+  bottom: 8px; left: 8px;
+  z-index: 5;
+  font-size: 9px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.45);
+  background: rgba(0,0,0,0.6);
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-family: var(--mono);
+}
+
+/* Foil indicator */
+.card__foil-badge {
+  position: absolute;
+  top: 8px; left: 8px;
+  z-index: 5;
+  font-size: 9px;
+  background: linear-gradient(135deg,#c8a020,#e0c040,#c8a020);
+  color: #3a2800;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-family: var(--mono);
+  letter-spacing: .05em;
+  font-weight: 600;
+}
+
+/* Body */
+.card__body { padding: 10px 12px 12px; flex: 1; display: flex; flex-direction: column; gap: 6px; }
+
+.card__namebar { display: flex; align-items: baseline; gap: 6px; flex-wrap: wrap; }
+.card__name { font-size: 13px; font-weight: 600; color: #fff; flex: 1; min-width: 0; letter-spacing: .01em; }
+.card__subtype { font-size: 9px; color: var(--text-dim); text-transform: uppercase; letter-spacing: .05em; white-space: nowrap; font-family: var(--mono); }
+
+/* Stats */
+.card__stats { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+
+.stat-pill {
+  display: flex; align-items: center; gap: 3px;
+  font-size: 11px; font-family: var(--mono);
+}
+
+.stat-pill__icon {
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 8px; font-style: normal; flex-shrink: 0;
+}
+
+.stat-cost .stat-pill__icon { background: #3a2a6a; color: #c0a0ff; }
+.stat-atk  .stat-pill__icon { background: #6a1a1a; color: #ffaaaa; }
+.stat-hp   .stat-pill__icon { background: #1a5a1a; color: #80ff80; }
+.stat-pill__val { color: rgba(255,255,255,0.75); font-size: 11px; }
+.stat-dot { color: var(--border2); font-size: 9px; }
+
+/* Keywords */
+.card__keywords { display: flex; gap: 3px; flex-wrap: wrap; }
+
+.kw {
+  font-size: 9px;
+  padding: 1px 6px;
+  border-radius: 99px;
+  border: 1px solid;
+  letter-spacing: .03em;
+  font-family: var(--mono);
+  white-space: nowrap;
+}
+
+/* Effect */
+.card__effect {
+  font-size: 11px;
+  color: rgba(255,255,255,0.45);
+  font-style: italic;
+  line-height: 1.4;
+  font-family: var(--mono);
+}
+
+/* Edition dots */
+.card__editions {
+  display: flex;
+  gap: 3px;
+  align-items: center;
+  margin-top: auto;
+  padding-top: 4px;
+}
+
+.ed-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--border2);
+  flex-shrink: 0;
+}
+
+.ed-dot.foil {
+  background: linear-gradient(135deg,#c8a020,#e0c040);
+}
+
+.ed-dot-label {
+  font-size: 9px;
+  color: var(--text-dim);
+  font-family: var(--mono);
+  letter-spacing: .04em;
+  margin-left: 2px;
+}
+
+/* Accent bar */
+.card__accent { height: 2px; flex-shrink: 0; }
+
+/* ── List mode card ──────────────────────────────────────────────────── */
+.cards-grid.is-list .card {
+  flex-direction: row;
+  max-height: 100px;
+  border-radius: var(--radius);
+}
+
+.cards-grid.is-list .card__art {
+  width: 130px;
+  min-width: 130px;
+  aspect-ratio: unset;
+  align-self: stretch;
+  border-radius: 0;
+}
+
+.cards-grid.is-list .card__body { flex-direction: row; align-items: center; gap: 12px; flex-wrap: wrap; padding: 8px 12px; }
+.cards-grid.is-list .card__namebar { min-width: 160px; }
+.cards-grid.is-list .card__effect { display: none; }
+.cards-grid.is-list .card__editions { margin-top: 0; padding-top: 0; }
+.cards-grid.is-list .card__accent { width: 2px; height: auto; flex-shrink: 0; align-self: stretch; background: none !important; border-left: 2px solid; }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   MODAL
+═══════════════════════════════════════════════════════════════════════════ */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  background: rgba(0,0,0,0.88);
+  backdrop-filter: blur(6px);
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.modal-overlay.open { display: flex; }
+
+.modal {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius-lg);
+  width: 100%;
+  max-width: 760px;
+  max-height: 90vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(123,97,255,0.2) transparent;
+}
+
+.modal::-webkit-scrollbar { width: 5px; }
+.modal::-webkit-scrollbar-thumb { background: rgba(123,97,255,0.2); border-radius: 3px; }
+
+/* Modal header art */
+.modal__art {
+  position: relative;
+  aspect-ratio: 10/7;
+  background: #060810;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.modal__art img.modal__main-img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.modal__art img.modal__frame {
+  position: absolute;
+  inset: 0; width: 100%; height: 100%;
+  object-fit: fill;
+  pointer-events: none;
+  z-index: 3;
+  .modal__frame { display: none; }
+  opacity: 1 !important;
+}
+
+
+
+.modal__art-placeholder {
+  width: 100%; height: 100%;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text-dim);
+  font-size: 40px;
+  opacity: 0.15;
+}
+
+.modal__art-gradient {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 60%;
+  background: linear-gradient(transparent, var(--surface));
+  z-index: 4;
+}
+
+.modal__art-title {
+  position: absolute;
+  bottom: 16px; left: 20px; right: 20px;
+  z-index: 5;
+}
+
+.modal__art-name {
+  font-size: 22px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: -.01em;
+  text-shadow: 0 2px 12px rgba(0,0,0,0.8);
+}
+
+.modal__art-type {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.5);
+  margin-top: 2px;
+}
+
+/* Modal close */
+.modal__close {
+  position: absolute;
+  top: 12px; right: 12px;
+  z-index: 10;
+  width: 30px; height: 30px;
+  background: rgba(0,0,0,0.55);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 50%;
+  color: rgba(255,255,255,0.7);
+  font-size: 14px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.modal__close:hover { background: rgba(0,0,0,0.8); color: #fff; }
+
+/* Modal body */
+.modal__body { padding: 16px 20px 20px; display: flex; flex-direction: column; gap: 14px; }
+
+/* Stat row */
+.modal__statrow {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.modal__stat {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-family: var(--mono);
+}
+
+.modal__stat-label { font-size: 9px; text-transform: uppercase; letter-spacing: .07em; color: var(--text-dim); }
+.modal__stat-val   { font-size: 16px; font-weight: 600; color: #fff; }
+
+.modal__stat.s-cost .modal__stat-val { color: #c0a0ff; }
+.modal__stat.s-atk  .modal__stat-val { color: #ffaaaa; }
+.modal__stat.s-hp   .modal__stat-val { color: #80ff80; }
+
+/* Keywords in modal */
+.modal__keywords { display: flex; gap: 5px; flex-wrap: wrap; }
+
+/* Effect */
+.modal__effect {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-left: 2px solid var(--accent);
+  border-radius: 0 6px 6px 0;
+  padding: 8px 12px;
+  font-size: 12px;
+  font-family: var(--mono);
+  color: rgba(255,255,255,0.65);
+  line-height: 1.5;
+}
+
+/* Lore */
+.modal__lore {
+  font-size: 12.5px;
+  color: var(--text-muted);
+  line-height: 1.75;
+  font-style: italic;
+  border-top: 1px solid var(--border);
+  padding-top: 12px;
+}
+
+/* Section label */
+.modal__section-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 8px;
+}
+
+/* Editions in modal */
+.modal__editions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+.modal__ed {
+  flex: 1;
+  min-width: 100px;
+  max-width: 160px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.modal__ed-art {
+  aspect-ratio: 2/3;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: #060810;
+  position: relative;
+  cursor: zoom-in;
+}
+
+.modal__ed-art img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform .25s ease;
+}
+
+.modal__ed-art:hover img { transform: scale(1.06); }
+
+.modal__ed-art::after {
+  content: '';
+  position: absolute; inset: 0;
+  box-shadow: inset 0 0 0 1.5px rgba(120,100,35,0.4);
+  border-radius: 5px;
+  pointer-events: none;
+}
+
+.modal__ed-label {
+  text-align: center;
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.modal__ed-label.foil { color: #c8a020; }
+
+/* Videos in modal */
+.modal__videos { display: flex; flex-direction: column; gap: 8px; }
+
+.modal__video {
+  border-radius: 8px;
+  overflow: hidden;
+  aspect-ratio: 16/9;
+  background: #060810;
+  border: 1px solid var(--border);
+  cursor: pointer;
+  position: relative;
+}
+
+.modal__video img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+  filter: brightness(.7);
+  transition: filter .2s;
+}
+
+.modal__video:hover img { filter: brightness(.9); }
+
+.modal__video-play {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24px; color: rgba(255,255,255,.85);
+  pointer-events: none;
+}
+
+/* Tags in modal */
+.modal__tags { display: flex; gap: 4px; flex-wrap: wrap; }
+
+.modal__tag {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: .04em;
+  padding: 2px 7px;
+  border-radius: 99px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+}
+
+/* ─ Lightbox for edition zoom ─ */
+.lightbox {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(0,0,0,0.94);
+  align-items: center;
+  justify-content: center;
+  cursor: zoom-out;
+}
+
+.lightbox.open { display: flex; }
+
+.lightbox img,
+.lightbox video,
+.lightbox iframe {
+  max-width: min(90vw, 900px);
+  max-height: 90vh;
+  border-radius: 6px;
+  display: block;
+  cursor: default;
+}
+
+.lightbox iframe {
+  width: min(88vw, 860px);
+  aspect-ratio: 16/9;
+  border: none;
+}
+
+.lightbox__close {
+  position: absolute;
+  top: 16px; right: 16px;
+  width: 36px; height: 36px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 50%;
+  color: rgba(255,255,255,0.7);
+  font-size: 16px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  z-index: 1001;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   UTILITIES + RESPONSIVE
+═══════════════════════════════════════════════════════════════════════════ */
+.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
+
+/* Faction colors applied via JS data attributes */
+[data-faction-color] { --fc: attr(data-faction-color); }
+
+/* Loading spinner */
+.spinner {
+  width: 32px; height: 32px;
+  border: 2px solid var(--border2);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin .7s linear infinite;
+  margin: 3rem auto;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+@media (max-width: 900px) {
+  :root { --sidebar-w: 200px; }
+}
+
+@media (max-width: 700px) {
+  .sidebar { display: none; }
+  .sidebar.mobile-open {
+    display: block;
+    position: fixed;
+    top: 56px; left: 0; bottom: 0;
+    z-index: 200;
+    width: 260px;
+    box-shadow: 4px 0 20px rgba(0,0,0,0.5);
+  }
+  .cards-grid { grid-template-columns: 1fr 1fr; }
+  .modal { max-width: 100%; max-height: 95vh; margin: auto 0; }
+  .modal__art { aspect-ratio: 16/9; }
+  .header-count { display: none; }
+}
+
+@media (max-width: 480px) {
+  .cards-grid { grid-template-columns: 1fr; }
+  .cards-grid.is-list .card__art { width: 90px; min-width: 90px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ HEADER ═══════════════════════════════════════════════════════════ -->
+<header class="site-header">
+  <div class="site-header__logo">
+    <span class="site-header__title" id="site-title">Eryxian TCG</span>
+    <span class="site-header__sub">Card Codex</span>
+  </div>
+
+  <div class="site-header__search">
+    <i class="fas fa-search search-icon"></i>
+    <input type="text" id="search-input" placeholder="Search cards, lore, tags…" autocomplete="off" spellcheck="false">
+  </div>
+
+  <div class="header-count" id="header-count"><span id="count-shown">0</span> / <span id="count-total">0</span> cards</div>
+
+  <button class="btn-icon" id="btn-grid" title="Grid view" aria-label="Grid view">
+    <i class="fas fa-th-large"></i>
+  </button>
+  <button class="btn-icon" id="btn-list" title="List view" aria-label="List view">
+    <i class="fas fa-list"></i>
+  </button>
+  <button class="btn-icon" id="btn-sidebar" title="Toggle filters" aria-label="Toggle filters">
+    <i class="fas fa-sliders-h"></i>
+  </button>
+</header>
+
+<!-- ═══ LAYOUT ═══════════════════════════════════════════════════════════ -->
+<div class="app-layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar" aria-label="Filters">
+
+    <div class="filter-section">
+      <div class="filter-label">
+        Sort by
+      </div>
+      <select class="sort-select" id="sort-select" aria-label="Sort cards">
+        <option value="name-asc">Name A–Z</option>
+        <option value="name-desc">Name Z–A</option>
+        <option value="cost-asc">Cost low–high</option>
+        <option value="cost-desc">Cost high–low</option>
+        <option value="atk-desc">ATK high–low</option>
+        <option value="hp-desc">HP high–low</option>
+        <option value="faction-asc">Faction</option>
+        <option value="type-asc">Type</option>
+        <option value="rarity-asc">Rarity common→legendary</option>
+        <option value="rarity-desc">Rarity legendary→common</option>
+      </select>
+    </div>
+
+    <div class="filter-section" id="faction-section">
+      <div class="filter-label">
+        Faction
+        <button class="filter-clear" id="faction-clear">clear</button>
+      </div>
+      <div class="faction-pills" id="faction-pills">
+        <!-- Populated by JS -->
+      </div>
+    </div>
+
+    <div class="filter-section" id="type-section">
+      <div class="filter-label">
+        Card Type
+        <button class="filter-clear" id="type-clear">clear</button>
+      </div>
+      <div class="check-list" id="type-list">
+        <!-- Populated by JS -->
+      </div>
+    </div>
+
+    <div class="filter-section" id="keyword-section">
+      <div class="filter-label">
+        Keywords
+        <button class="filter-clear" id="keyword-clear">clear</button>
+      </div>
+      <div class="check-list" id="keyword-list">
+        <!-- Populated by JS -->
+      </div>
+    </div>
+
+    <div class="filter-section" id="edition-section">
+      <div class="filter-label">
+        Editions
+        <button class="filter-clear" id="edition-clear">clear</button>
+      </div>
+      <div class="check-list" id="edition-list">
+        <!-- Populated by JS -->
+      </div>
+    </div>
+
+    <div class="filter-section" id="rarity-section">
+      <div class="filter-label">
+        Rarity
+        <button class="filter-clear" id="rarity-clear">clear</button>
+      </div>
+      <div class="check-list" id="rarity-list"></div>
+    </div>
+
+    <div class="filter-section">
+      <div class="filter-label">Stats range</div>
+      <div class="range-row">
+        <div class="range-field">
+          <label for="cost-min">Cost min</label>
+          <input type="number" id="cost-min" min="0" placeholder="any">
+        </div>
+        <div class="range-field">
+          <label for="cost-max">Cost max</label>
+          <input type="number" id="cost-max" min="0" placeholder="any">
+        </div>
+        <div class="range-field">
+          <label for="atk-min">ATK min</label>
+          <input type="number" id="atk-min" min="0" placeholder="any">
+        </div>
+        <div class="range-field">
+          <label for="atk-max">ATK max</label>
+          <input type="number" id="atk-max" min="0" placeholder="any">
+        </div>
+        <div class="range-field">
+          <label for="hp-min">HP min</label>
+          <input type="number" id="hp-min" min="0" placeholder="any">
+        </div>
+        <div class="range-field">
+          <label for="hp-max">HP max</label>
+          <input type="number" id="hp-max" min="0" placeholder="any">
+        </div>
+      </div>
+    </div>
+
+    <div class="filter-section">
+      <button class="btn-reset" id="btn-reset-all">
+        <i class="fas fa-undo" style="margin-right:5px;font-size:10px"></i> Reset all filters
+      </button>
+    </div>
+
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main-content">
+    <div class="active-filters" id="active-filters"></div>
+    <div class="cards-grid" id="cards-grid">
+      <div class="spinner"></div>
+    </div>
+  </main>
+
+</div>
+
+<!-- ═══ CARD MODAL ════════════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-name">
+  <div class="modal" id="modal">
+    <!-- Populated by JS -->
+  </div>
+</div>
+
+<!-- ═══ LIGHTBOX ═════════════════════════════════════════════════════════ -->
+<div class="lightbox" id="lightbox">
+  <button class="lightbox__close" id="lightbox-close" aria-label="Close">✕</button>
+  <div id="lightbox-content"></div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════════════════
+   ERYXIAN TCG CODEX — APP
+   Data-driven: loads cards.json from same directory.
+   Falls back to DEMO_DATA if fetch fails (e.g. opening file:// locally).
+═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── State ─────────────────────────────────────────────────────────────── */
+const state = {
+  allCards:       [],
+  filteredCards:  [],
+  factions:       {},      // from meta
+  rarities: {},
+  activeFilters: {
+    search:    '',
+    factions:  new Set(),
+    types:     new Set(),
+    keywords:  new Set(),
+    editions:  new Set(),
+    rarities: new Set(),
+    cost:      { min: null, max: null },
+    atk:       { min: null, max: null },
+    hp:        { min: null, max: null },
+  },
+  sort:   'name-asc',
+  layout: 'grid',
+  sidebarOpen: true,
+};
+
+/* ── Default faction colours (overridden by JSON meta) ─────────────────── */
+const FACTION_DEFAULTS = {
+  color:  '#888',
+  accent: '#666',
+};
+
+/* ── Keyword colours ────────────────────────────────────────────────────── */
+const KW_COLORS = {
+  'Defender':       { border:'#2a5a9a', color:'#80b8ff' },
+  'Fury':           { border:'#9a2a2a', color:'#ffa0a0' },
+  'Immunity':       { border:'#2a7a2a', color:'#80ff80' },
+  'Effect Immunity':{ border:'#2a7a2a', color:'#80ff80' },
+  'Flying':         { border:'#4a4a9a', color:'#b0b0ff' },
+  'Stealth':        { border:'#7a6a10', color:'#ffd870' },
+  'Taunt':          { border:'#7a3a10', color:'#ffb070' },
+  'Regeneration':   { border:'#107a5a', color:'#70ffc0' },
+  'Trample':        { border:'#7a2a5a', color:'#ffaad0' },
+  'Haste':          { border:'#6a2a0a', color:'#ff9050' },
+  'Overdrive':      { border:'#8a6a00', color:'#ffcc30' },
+  'Trap':           { border:'#6a2a5a', color:'#ff90cc' },
+  'Hero Ability':   { border:'#8a7a00', color:'#ffe060' },
+};
+
+const kwStyle = (kw) => {
+  const s = KW_COLORS[kw];
+  if (s) return `border-color:${s.border};color:${s.color}`;
+  return `border-color:#444;color:rgba(255,255,255,0.42)`;
+};
+
+/* ── Load data ──────────────────────────────────────────────────────────── */
+async function loadData() {
+  let data = null;
+  try {
+    const r = await fetch('./cards.json');
+    if (r.ok) data = await r.json();
+  } catch(e) {}
+
+  if (!data) {
+    console.warn('cards.json not found — using embedded demo data');
+    data = DEMO_DATA;
+  }
+
+  // Apply meta
+  if (data.meta?.title) {
+    document.title = data.meta.title + ' — Card Codex';
+    document.getElementById('site-title').textContent = data.meta.title.replace('—','').trim().split(' ').slice(0,2).join(' ');
+  }
+  state.rarities = data.rarities || {};
+  state.factions = data.factions || {};
+  state.allCards  = (data.cards || []).map(normaliseCard);
+  buildUI();
+  applyFilters();
+}
+
+/* Normalise a card — handle missing fields gracefully */
+function normaliseCard(c) {
+  return {
+    id:       c.id       || slugify(c.name || 'card'),
+    rarity:   c.rarity   || 'common',
+    name:     c.name     || 'Unknown',
+    faction:  (c.faction || 'unknown').toLowerCase(),
+    type:     c.type     || 'Character',
+    subtype:  c.subtype  || '',
+    cost:     c.cost  != null ? Number(c.cost) : null,
+    atk:      c.atk   != null ? Number(c.atk)  : null,
+    hp:       c.hp    != null ? Number(c.hp)   : null,
+    keywords: Array.isArray(c.keywords) ? c.keywords : [],
+    effect:   c.effect   || '',
+    lore:     c.lore     || '',
+    mainImage:c.mainImage|| '',
+    frame:    c.frame    || '',
+    editions: Array.isArray(c.editions) ? c.editions : [],
+    videos:   Array.isArray(c.videos)   ? c.videos   : [],
+    tags:     Array.isArray(c.tags)     ? c.tags     : [],
+  };
+}
+
+function slugify(s) {
+  return s.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');
+}
+
+/* ── Build sidebar filters ──────────────────────────────────────────────── */
+function buildUI() {
+  const cards = state.allCards;
+
+  // Faction pills
+  const factionCounts = {};
+  cards.forEach(c => { factionCounts[c.faction] = (factionCounts[c.faction]||0)+1; });
+
+  const factionPills = document.getElementById('faction-pills');
+  factionPills.innerHTML = '';
+  // Build in order of meta.factions, then any extras
+  const factionKeys = [
+    ...Object.keys(state.factions),
+    ...Object.keys(factionCounts).filter(k => !state.factions[k]),
+  ].filter(k => factionCounts[k]);
+
+  factionKeys.forEach(key => {
+    const meta  = state.factions[key] || FACTION_DEFAULTS;
+    const label = meta.label || capitalise(key);
+    const count = factionCounts[key] || 0;
+    const btn   = document.createElement('button');
+    btn.className = 'faction-pill';
+    btn.dataset.faction = key;
+    btn.style.setProperty('--pill-color', meta.color);
+    btn.innerHTML = `
+      <span class="faction-pill__dot" style="background:${meta.color}"></span>
+      ${esc(label)}
+      <span class="faction-pill__count">${count}</span>
+    `;
+    btn.addEventListener('click', () => toggleFaction(key));
+    factionPills.appendChild(btn);
+  });
+
+  // Types
+  buildCheckList('type-list', uniqueValues(cards,'type'));
+
+  // Keywords (dynamic — all keywords across all cards)
+  const allKws = [...new Set(cards.flatMap(c=>c.keywords))].sort();
+  buildCheckList('keyword-list', allKws, 'keyword');
+
+  // Editions
+  const allEds = [...new Set(cards.flatMap(c=>c.editions.map(e=>e.name)))].sort();
+  buildCheckList('edition-list', allEds, 'edition');
+
+  // Rarity — in defined order, not alphabetical
+  const rarityOrder = Object.keys(state.rarities || {});
+  const allRarities = rarityOrder.length
+    ? rarityOrder.filter(r => cards.some(c => c.rarity === r))
+    : [...new Set(cards.map(c=>c.rarity))].sort();
+  buildCheckList('rarity-list', allRarities, 'rarity');
+}
+
+function buildCheckList(containerId, values, kind) {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  el.innerHTML = '';
+  values.forEach(val => {
+    const item = document.createElement('div');
+    item.className = 'check-item';
+    item.dataset.val = val;
+    item.dataset.kind = kind || containerId.replace('-list','');
+    item.innerHTML = `
+      <span class="check-box"><i class="fas fa-check" style="font-size:8px"></i></span>
+      <span>${esc(val)}</span>
+      <span class="check-count"></span>
+    `;
+    item.addEventListener('click', () => toggleCheck(item));
+    el.appendChild(item);
+  });
+}
+
+function uniqueValues(cards, field) {
+  return [...new Set(cards.map(c=>c[field]).filter(Boolean))].sort();
+}
+
+/* ── Filter logic ───────────────────────────────────────────────────────── */
+function applyFilters() {
+  const f = state.activeFilters;
+  const s = state.sort;
+  let cards = [...state.allCards];
+
+  // Search
+  if (f.search) {
+    const q = f.search.toLowerCase();
+    cards = cards.filter(c =>
+      c.name.toLowerCase().includes(q) ||
+      c.lore.toLowerCase().includes(q) ||
+      c.effect.toLowerCase().includes(q) ||
+      c.tags.some(t=>t.includes(q)) ||
+      c.keywords.some(k=>k.toLowerCase().includes(q)) ||
+      c.faction.includes(q) ||
+      c.type.toLowerCase().includes(q)
+    );
+  }
+
+  // Faction
+  if (f.factions.size) {
+    cards = cards.filter(c => f.factions.has(c.faction));
+  }
+
+  // Types
+  if (f.types.size) {
+    cards = cards.filter(c => f.types.has(c.type));
+  }
+
+  // Keywords
+  if (f.keywords.size) {
+    cards = cards.filter(c => [...f.keywords].every(k => c.keywords.includes(k)));
+  }
+
+  // Editions
+  if (f.editions.size) {
+    cards = cards.filter(c => c.editions.some(e => f.editions.has(e.name)));
+  }
+
+  if (f.rarities.size) {
+    cards = cards.filter(c => f.rarities.has(c.rarity));
+  }
+
+  // Stat ranges
+  ['cost','atk','hp'].forEach(stat => {
+    const {min,max} = f[stat];
+    if (min != null) cards = cards.filter(c => c[stat] != null && c[stat] >= min);
+    if (max != null) cards = cards.filter(c => c[stat] != null && c[stat] <= max);
+  });
+
+  // Sort
+  const [sortField, sortDir] = s.split('-');
+  cards.sort((a,b) => {
+    let av = a[sortField], bv = b[sortField];
+    if (av == null) av = sortDir === 'asc' ? Infinity : -Infinity;
+    if (bv == null) bv = sortDir === 'asc' ? Infinity : -Infinity;
+    if (typeof av === 'string') av = av.toLowerCase();
+    if (typeof bv === 'string') bv = bv.toLowerCase();
+    if (av < bv) return sortDir === 'asc' ? -1 : 1;
+    if (av > bv) return sortDir === 'asc' ? 1  : -1;
+    return 0;
+  });
+
+  state.filteredCards = cards;
+  renderCards();
+  updateCounts();
+  updateCheckCounts();
+  renderActiveTags();
+}
+
+/* ── Render cards ───────────────────────────────────────────────────────── */
+function renderCards() {
+  const grid = document.getElementById('cards-grid');
+  grid.className = 'cards-grid' + (state.layout === 'list' ? ' is-list' : '');
+
+  if (!state.filteredCards.length) {
+    grid.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-state__icon"><i class="fas fa-scroll"></i></div>
+        <div class="empty-state__title">No cards match your filters</div>
+        <div class="empty-state__sub">Try adjusting your search or clearing filters</div>
+      </div>`;
+    return;
+  }
+
+  grid.innerHTML = '';
+  state.filteredCards.forEach(card => {
+    grid.appendChild(buildCardEl(card));
+  });
+}
+
+function buildCardEl(card) {
+  const fMeta   = state.factions[card.faction] || {};
+  const fColor  = fMeta.color  || '#888';
+  const fLabel  = fMeta.label  || capitalise(card.faction);
+  const hasFoil = card.editions.some(e=>e.foil);
+
+  const el = document.createElement('div');
+  el.className = 'card';
+  el.dataset.id = card.id;
+
+  // Art
+  const artEl = document.createElement('div');
+  artEl.className = 'card__art';
+
+  if (card.mainImage) {
+    const img = document.createElement('img');
+    img.src = card.mainImage;
+    img.alt = card.name;
+    img.loading = 'lazy';
+    artEl.appendChild(img);
+  } else {
+    const ph = document.createElement('div');
+    ph.className = 'card__art-placeholder';
+    ph.style.background = `linear-gradient(135deg, ${fColor}18, ${fColor}08)`;
+    ph.innerHTML = `<i class="fas fa-chess-rook"></i><span>${esc(card.name)}</span>`;
+    artEl.appendChild(ph);
+  }
+
+  if (card.frame) {
+    const frame = document.createElement('img');
+    frame.src = card.frame;
+    frame.className = 'card__frame';
+    frame.alt = '';
+    frame.loading = 'lazy';
+    artEl.appendChild(frame);
+  }
+
+  const badge = document.createElement('span');
+  badge.className = 'card__faction-badge';
+  badge.style.background = fColor + '22';
+  badge.style.color = fColor;
+  badge.style.border = `1px solid ${fColor}44`;
+  badge.textContent = fLabel;
+  artEl.appendChild(badge);
+
+  if (card.type) {
+    const typeBadge = document.createElement('span');
+    typeBadge.className = 'card__type-badge';
+    typeBadge.textContent = card.subtype ? `${card.type} · ${card.subtype}` : card.type;
+    artEl.appendChild(typeBadge);
+  }
+
+  if (hasFoil) {
+    const foilBadge = document.createElement('span');
+    foilBadge.className = 'card__foil-badge';
+    foilBadge.textContent = '✦ Foil';
+    artEl.appendChild(foilBadge);
+  }
+
+  // Body
+  const body = document.createElement('div');
+  body.className = 'card__body';
+
+  const namebar = document.createElement('div');
+  namebar.className = 'card__namebar';
+  namebar.innerHTML = `<span class="card__name">${esc(card.name)}</span>`;
+  body.appendChild(namebar);
+
+  // Stats
+  const statsEl = buildStatsEl(card);
+  if (statsEl) body.appendChild(statsEl);
+
+  // Keywords
+  if (card.keywords.length) {
+    const kwEl = document.createElement('div');
+    kwEl.className = 'card__keywords';
+    card.keywords.forEach(kw => {
+      kwEl.innerHTML += `<span class="kw" style="${kwStyle(kw)}">${esc(kw)}</span>`;
+    });
+    body.appendChild(kwEl);
+  }
+
+  // Effect
+  if (card.effect) {
+    const effEl = document.createElement('div');
+    effEl.className = 'card__effect';
+    effEl.textContent = card.effect;
+    body.appendChild(effEl);
+  }
+
+  // Edition dots
+  if (card.editions.length) {
+    const edsEl = document.createElement('div');
+    edsEl.className = 'card__editions';
+    card.editions.slice(0,6).forEach(ed => {
+      const dot = document.createElement('span');
+      dot.className = 'ed-dot' + (ed.foil ? ' foil' : '');
+      dot.title = ed.name;
+      edsEl.appendChild(dot);
+    });
+    const lbl = document.createElement('span');
+    lbl.className = 'ed-dot-label';
+    lbl.textContent = card.editions.length + ' ed.';
+    edsEl.appendChild(lbl);
+    body.appendChild(edsEl);
+  }
+
+  // Accent
+  const accent = document.createElement('div');
+  accent.className = 'card__accent';
+  accent.style.background = `linear-gradient(90deg,transparent,${fColor},transparent)`;
+
+  // In list mode accent is side border
+  if (state.layout === 'list') {
+    accent.style.borderLeftColor = fColor;
+  }
+
+  el.appendChild(artEl);
+  el.appendChild(body);
+  el.appendChild(accent);
+
+  el.addEventListener('click', () => openModal(card));
+  return el;
+}
+
+function buildStatsEl(card) {
+  const hasStat = card.cost != null || card.atk != null || card.hp != null;
+  if (!hasStat) return null;
+
+  const el = document.createElement('div');
+  el.className = 'card__stats';
+
+  if (card.cost != null) {
+    el.innerHTML += `<span class="stat-pill stat-cost"><span class="stat-pill__icon">◆</span><span class="stat-pill__val">${card.cost}</span></span>`;
+  }
+  if (card.atk != null) {
+    if (card.cost != null) el.innerHTML += `<span class="stat-dot">·</span>`;
+    el.innerHTML += `<span class="stat-pill stat-atk"><span class="stat-pill__icon">⚔</span><span class="stat-pill__val">${card.atk}</span></span>`;
+  }
+  if (card.hp != null) {
+    if (card.cost != null || card.atk != null) el.innerHTML += `<span class="stat-dot">·</span>`;
+    el.innerHTML += `<span class="stat-pill stat-hp"><span class="stat-pill__icon">♥</span><span class="stat-pill__val">${card.hp}</span></span>`;
+  }
+
+  return el;
+}
+
+/* ── Modal ──────────────────────────────────────────────────────────────── */
+function openModal(card) {
+  const fMeta  = state.factions[card.faction] || {};
+  const fColor = fMeta.color || '#888';
+  const fLabel = fMeta.label || capitalise(card.faction);
+
+  const modal = document.getElementById('modal');
+  modal.innerHTML = '';
+
+  // Art header
+  const artDiv = document.createElement('div');
+  artDiv.className = 'modal__art';
+  artDiv.style.background = `linear-gradient(135deg, ${fColor}22, #060810)`;
+
+  if (card.mainImage) {
+    artDiv.innerHTML = `<img class="modal__main-img" src="${esc(card.mainImage)}" alt="${esc(card.name)}">`;
+  } else {
+    artDiv.innerHTML = `<div class="modal__art-placeholder"><i class="fas fa-chess-rook"></i></div>`;
+  }
+
+  if (card.frame) {
+    artDiv.innerHTML += `<img class="modal__frame" src="${esc(card.frame)}" alt="">`;
+  }
+
+  artDiv.innerHTML += `
+    <div class="modal__art-gradient"></div>
+    <div class="modal__art-title">
+      <div class="modal__art-name" id="modal-name">${esc(card.name)}</div>
+      <div class="modal__art-type">${esc(fLabel)} · ${esc(card.type)}${card.subtype ? ' · '+esc(card.subtype) : ''}</div>
+    </div>
+    <button class="modal__close" id="modal-close" aria-label="Close">✕</button>
+  `;
+
+  modal.appendChild(artDiv);
+
+  // Body
+  const body = document.createElement('div');
+  body.className = 'modal__body';
+
+  // Stats
+  const hasStat = card.cost != null || card.atk != null || card.hp != null;
+  if (hasStat) {
+    const statRow = document.createElement('div');
+    statRow.className = 'modal__statrow';
+    if (card.cost != null) statRow.innerHTML += `<div class="modal__stat s-cost"><span class="modal__stat-label">Cost</span><span class="modal__stat-val">${card.cost}</span></div>`;
+    if (card.atk  != null) statRow.innerHTML += `<div class="modal__stat s-atk"><span class="modal__stat-label">ATK</span><span class="modal__stat-val">${card.atk}</span></div>`;
+    if (card.hp   != null) statRow.innerHTML += `<div class="modal__stat s-hp"><span class="modal__stat-label">HP</span><span class="modal__stat-val">${card.hp}</span></div>`;
+    body.appendChild(statRow);
+  }
+
+  // Keywords
+  if (card.keywords.length) {
+    const kwEl = document.createElement('div');
+    kwEl.className = 'modal__keywords';
+    card.keywords.forEach(kw => {
+      kwEl.innerHTML += `<span class="kw" style="font-size:11px;padding:3px 9px;${kwStyle(kw)}">${esc(kw)}</span>`;
+    });
+    body.appendChild(kwEl);
+  }
+
+  // Effect
+  if (card.effect) {
+    const effEl = document.createElement('div');
+    effEl.className = 'modal__effect';
+    effEl.textContent = card.effect;
+    body.appendChild(effEl);
+  }
+
+  // Lore
+  if (card.lore) {
+    const loreEl = document.createElement('div');
+    loreEl.className = 'modal__lore';
+    loreEl.textContent = card.lore;
+    body.appendChild(loreEl);
+  }
+
+  // Editions
+  if (card.editions.length) {
+    const edSec = document.createElement('div');
+    edSec.innerHTML = `<div class="modal__section-label">Editions (${card.editions.length})</div>`;
+    const edRow = document.createElement('div');
+    edRow.className = 'modal__editions';
+
+    card.editions.forEach(ed => {
+      const edDiv = document.createElement('div');
+      edDiv.className = 'modal__ed';
+
+      const artDiv2 = document.createElement('div');
+      artDiv2.className = 'modal__ed-art';
+
+      if (ed.image) {
+        const img = document.createElement('img');
+        img.src = ed.image;
+        img.alt = ed.name;
+        img.loading = 'lazy';
+        artDiv2.appendChild(img);
+        artDiv2.addEventListener('click', () => openLightboxImg(ed.image, card.name + ' — ' + ed.name));
+      } else {
+        artDiv2.style.background = `linear-gradient(135deg,${fColor}18,${fColor}08)`;
+        artDiv2.style.display = 'flex'; artDiv2.style.alignItems = 'center'; artDiv2.style.justifyContent = 'center';
+        artDiv2.innerHTML = `<span style="font-size:9px;color:var(--text-dim);font-family:var(--mono);letter-spacing:.05em">${esc(ed.name)}</span>`;
+        artDiv2.style.cursor = 'default';
+      }
+
+      const lbl = document.createElement('div');
+      lbl.className = 'modal__ed-label' + (ed.foil ? ' foil' : '');
+      lbl.textContent = ed.name + (ed.foil ? ' ✦' : '');
+
+      edDiv.appendChild(artDiv2);
+      edDiv.appendChild(lbl);
+      edRow.appendChild(edDiv);
+    });
+
+    edSec.appendChild(edRow);
+    body.appendChild(edSec);
+  }
+
+  // Videos
+  if (card.videos.length) {
+    const vidSec = document.createElement('div');
+    vidSec.innerHTML = `<div class="modal__section-label">Media</div>`;
+    const vidList = document.createElement('div');
+    vidList.className = 'modal__videos';
+
+    card.videos.forEach(v => {
+      const vDiv = document.createElement('div');
+      vDiv.className = 'modal__video';
+
+      if (v.type === 'youtube') {
+        vDiv.innerHTML = `
+          <img src="https://img.youtube.com/vi/${esc(v.id)}/mqdefault.jpg" alt="${esc(v.label||'Video')}" loading="lazy">
+          <div class="modal__video-play">▶</div>`;
+        vDiv.addEventListener('click', () => openLightboxYT(v.id));
+      } else if (v.type === 'cloudinary') {
+        const poster = v.poster || v.url.replace('/upload/','/upload/so_0,f_jpg/').replace(/\.[^.]+$/,'.jpg');
+        vDiv.innerHTML = `
+          <img src="${esc(poster)}" alt="${esc(v.label||'Video')}" loading="lazy">
+          <div class="modal__video-play">▶</div>`;
+        vDiv.addEventListener('click', () => openLightboxVideo(v.url, poster));
+      }
+
+      vidList.appendChild(vDiv);
+    });
+
+    vidSec.appendChild(vidList);
+    body.appendChild(vidSec);
+  }
+
+  // Tags
+  if (card.tags.length) {
+    const tagSec = document.createElement('div');
+    tagSec.innerHTML = `<div class="modal__section-label">Tags</div>`;
+    const tagRow = document.createElement('div');
+    tagRow.className = 'modal__tags';
+    card.tags.forEach(t => {
+      tagRow.innerHTML += `<span class="modal__tag">${esc(t)}</span>`;
+    });
+    tagSec.appendChild(tagRow);
+    body.appendChild(tagSec);
+  }
+
+  modal.appendChild(body);
+
+  // Accent line at modal bottom
+  const accent = document.createElement('div');
+  accent.style.cssText = `height:3px;flex-shrink:0;background:linear-gradient(90deg,transparent,${fColor},transparent)`;
+  modal.appendChild(accent);
+
+  // Open
+  document.getElementById('modal-overlay').classList.add('open');
+  document.getElementById('modal-close').addEventListener('click', closeModal);
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+document.getElementById('modal-overlay').addEventListener('click', e => {
+  if (e.target === document.getElementById('modal-overlay')) closeModal();
+});
+
+/* ── Lightbox ───────────────────────────────────────────────────────────── */
+function openLightboxImg(src, label) {
+  const large = src.includes('res.cloudinary.com')
+    ? src.replace('/upload/', '/upload/w_1400,f_auto/')
+    : src;
+  document.getElementById('lightbox-content').innerHTML = `<img src="${esc(large)}" alt="${esc(label||'')}">`;
+  document.getElementById('lightbox').classList.add('open');
+}
+
+function openLightboxYT(id) {
+  document.getElementById('lightbox-content').innerHTML =
+    `<iframe src="https://www.youtube.com/embed/${esc(id)}?autoplay=1&rel=0" allow="autoplay;fullscreen" allowfullscreen></iframe>`;
+  document.getElementById('lightbox').classList.add('open');
+}
+
+function openLightboxVideo(src, poster) {
+  document.getElementById('lightbox-content').innerHTML =
+    `<video src="${esc(src)}" poster="${esc(poster)}" controls autoplay style="max-width:min(90vw,900px);max-height:90vh;border-radius:6px;display:block"></video>`;
+  document.getElementById('lightbox').classList.add('open');
+}
+
+function closeLightbox() {
+  const lb = document.getElementById('lightbox');
+  const vid = lb.querySelector('video');
+  if (vid) vid.pause();
+  document.getElementById('lightbox-content').innerHTML = '';
+  lb.classList.remove('open');
+}
+
+document.getElementById('lightbox').addEventListener('click', e => {
+  if (e.target === document.getElementById('lightbox')) closeLightbox();
+});
+document.getElementById('lightbox-close').addEventListener('click', closeLightbox);
+
+/* ── Filter toggles ─────────────────────────────────────────────────────── */
+function toggleFaction(key) {
+  const f = state.activeFilters.factions;
+  if (f.has(key)) f.delete(key); else f.add(key);
+  document.querySelectorAll('.faction-pill').forEach(el => {
+    el.classList.toggle('active', f.has(el.dataset.faction));
+  });
+  document.getElementById('faction-clear').classList.toggle('visible', f.size > 0);
+  applyFilters();
+}
+
+function toggleCheck(item) {
+  const kind = item.dataset.kind;
+  const val  = item.dataset.val;
+  const filterKey = kind === 'type' ? 'types' : kind === 'keyword' ? 'keywords' : 'editions';
+  const set = state.activeFilters[filterKey];
+  if (set.has(val)) set.delete(val); else set.add(val);
+  item.classList.toggle('active', set.has(val));
+  const clearBtn = document.getElementById(kind + '-clear');
+  if (clearBtn) clearBtn.classList.toggle('visible', set.size > 0);
+  applyFilters();
+}
+
+/* ── Stat range inputs ──────────────────────────────────────────────────── */
+['cost','atk','hp'].forEach(stat => {
+  ['min','max'].forEach(mm => {
+    const el = document.getElementById(`${stat}-${mm}`);
+    if (el) el.addEventListener('input', () => {
+      const v = el.value.trim();
+      state.activeFilters[stat][mm] = v === '' ? null : Number(v);
+      applyFilters();
+    });
+  });
+});
+
+/* ── Sort ───────────────────────────────────────────────────────────────── */
+document.getElementById('sort-select').addEventListener('change', e => {
+  state.sort = e.target.value;
+  applyFilters();
+});
+
+/* ── Search ─────────────────────────────────────────────────────────────── */
+let searchTimer;
+document.getElementById('search-input').addEventListener('input', e => {
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(() => {
+    state.activeFilters.search = e.target.value.trim().toLowerCase();
+    applyFilters();
+  }, 180);
+});
+
+/* ── Clear buttons ──────────────────────────────────────────────────────── */
+document.getElementById('faction-clear').addEventListener('click', () => {
+  state.activeFilters.factions.clear();
+  document.querySelectorAll('.faction-pill').forEach(el => el.classList.remove('active'));
+  document.getElementById('faction-clear').classList.remove('visible');
+  applyFilters();
+});
+
+['type','keyword','edition'].forEach(kind => {
+  const btn = document.getElementById(kind+'-clear');
+  if (!btn) return;
+  btn.addEventListener('click', () => {
+    const filterKey = kind === 'type' ? 'types' : kind+'s';
+    state.activeFilters[filterKey].clear();
+    document.querySelectorAll(`[data-kind="${kind}"]`).forEach(el => el.classList.remove('active'));
+    btn.classList.remove('visible');
+    applyFilters();
+  });
+});
+
+document.getElementById('btn-reset-all').addEventListener('click', resetAll);
+
+function resetAll() {
+  state.activeFilters.search = '';
+  state.activeFilters.factions.clear();
+  state.activeFilters.types.clear();
+  state.activeFilters.keywords.clear();
+  state.activeFilters.editions.clear();
+  ['cost','atk','hp'].forEach(s => { state.activeFilters[s].min = null; state.activeFilters[s].max = null; });
+  document.getElementById('search-input').value = '';
+  document.querySelectorAll('.faction-pill,.check-item').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.filter-clear').forEach(el => el.classList.remove('visible'));
+  document.querySelectorAll('.range-field input').forEach(el => el.value = '');
+  applyFilters();
+}
+
+/* ── Layout toggles ─────────────────────────────────────────────────────── */
+document.getElementById('btn-grid').addEventListener('click', () => { state.layout='grid'; renderCards(); updateLayoutBtns(); });
+document.getElementById('btn-list').addEventListener('click', () => { state.layout='list'; renderCards(); updateLayoutBtns(); });
+
+function updateLayoutBtns() {
+  document.getElementById('btn-grid').classList.toggle('active', state.layout==='grid');
+  document.getElementById('btn-list').classList.toggle('active', state.layout==='list');
+}
+
+/* ── Sidebar toggle ─────────────────────────────────────────────────────── */
+document.getElementById('btn-sidebar').addEventListener('click', () => {
+  const sb = document.getElementById('sidebar');
+  if (window.innerWidth <= 700) {
+    sb.classList.toggle('mobile-open');
+    document.getElementById('btn-sidebar').classList.toggle('active', sb.classList.contains('mobile-open'));
+  } else {
+    state.sidebarOpen = !state.sidebarOpen;
+    sb.classList.toggle('collapsed', !state.sidebarOpen);
+    document.getElementById('btn-sidebar').classList.toggle('active', state.sidebarOpen);
+  }
+});
+
+/* ── Update counts ──────────────────────────────────────────────────────── */
+function updateCounts() {
+  document.getElementById('count-shown').textContent = state.filteredCards.length;
+  document.getElementById('count-total').textContent = state.allCards.length;
+}
+
+function updateCheckCounts() {
+  // Could update counts per check item — skip for perf unless needed
+}
+
+/* ── Active filter tags bar ─────────────────────────────────────────────── */
+function renderActiveTags() {
+  const bar = document.getElementById('active-filters');
+  bar.innerHTML = '';
+
+  const f = state.activeFilters;
+
+  if (f.search) {
+    bar.appendChild(makeTag(`search: "${f.search}"`, () => {
+      f.search = ''; document.getElementById('search-input').value = ''; applyFilters();
+    }));
+  }
+
+  f.factions.forEach(v => {
+    const label = state.factions[v]?.label || capitalise(v);
+    bar.appendChild(makeTag(label, () => toggleFaction(v)));
+  });
+
+  f.types.forEach(v => {
+    bar.appendChild(makeTag('type: '+v, () => {
+      f.types.delete(v);
+      document.querySelectorAll(`[data-kind="type"][data-val="${CSS.escape(v)}"]`).forEach(el=>el.classList.remove('active'));
+      applyFilters();
+    }));
+  });
+
+  f.keywords.forEach(v => {
+    bar.appendChild(makeTag('kw: '+v, () => {
+      f.keywords.delete(v);
+      document.querySelectorAll(`[data-kind="keyword"][data-val="${CSS.escape(v)}"]`).forEach(el=>el.classList.remove('active'));
+      applyFilters();
+    }));
+  });
+
+  f.editions.forEach(v => {
+    bar.appendChild(makeTag('ed: '+v, () => {
+      f.editions.delete(v);
+      document.querySelectorAll(`[data-kind="edition"][data-val="${CSS.escape(v)}"]`).forEach(el=>el.classList.remove('active'));
+      applyFilters();
+    }));
+  });
+
+  ['cost','atk','hp'].forEach(stat => {
+    const {min,max} = f[stat];
+    if (min != null) bar.appendChild(makeTag(`${stat} ≥ ${min}`, () => { f[stat].min=null; document.getElementById(`${stat}-min`).value=''; applyFilters(); }));
+    if (max != null) bar.appendChild(makeTag(`${stat} ≤ ${max}`, () => { f[stat].max=null; document.getElementById(`${stat}-max`).value=''; applyFilters(); }));
+  });
+}
+
+function makeTag(label, onRemove) {
+  const tag = document.createElement('div');
+  tag.className = 'filter-tag';
+  tag.innerHTML = `${esc(label)} <button class="filter-tag__remove" aria-label="Remove filter">✕</button>`;
+  tag.querySelector('button').addEventListener('click', onRemove);
+  return tag;
+}
+
+/* ── Keyboard ───────────────────────────────────────────────────────────── */
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    closeLightbox();
+    closeModal();
+  }
+  // Press / to focus search
+  if (e.key === '/' && document.activeElement.tagName !== 'INPUT') {
+    e.preventDefault();
+    document.getElementById('search-input').focus();
+  }
+});
+
+/* ── Utilities ──────────────────────────────────────────────────────────── */
+function esc(s) {
+  if (s == null) return '';
+  return String(s)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;');
+}
+
+function capitalise(s) {
+  if (!s) return '';
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
+/* ── Init ───────────────────────────────────────────────────────────────── */
+document.getElementById('btn-grid').classList.add('active');
+document.getElementById('btn-sidebar').classList.add('active');
+updateLayoutBtns();
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   DEMO DATA — used when cards.json cannot be fetched
+   This is a subset of the full card list; replace with full cards.json.
+═══════════════════════════════════════════════════════════════════════════ */
+const DEMO_DATA = {
+  "meta": { "title": "Eryxian Legacy TCG", "version": "1.0-demo" },
+  "factions": {
+    "humans":     { "label": "Humans",     "color": "#4a90d9", "accent": "#3a7acc" },
+    "eryxians":   { "label": "Eryxians",   "color": "#3aaa50", "accent": "#2d8a40" },
+    "collective": { "label": "Collective", "color": "#cc8800", "accent": "#aa7000" },
+    "ancients":   { "label": "Ancients",   "color": "#9a40cc", "accent": "#7a30aa" },
+    "hero":       { "label": "Hero",       "color": "#cc9020", "accent": "#aa7810" },
+    "token":      { "label": "Token",      "color": "#666688", "accent": "#555577" }
+  },
+  "cards": [
+    { "id":"soldier","name":"Soldier","faction":"humans","type":"Character","cost":1,"atk":1,"hp":1,"keywords":[],"effect":"Death: Draw a card","lore":"The basic human grunt — not special, not exceptional, entirely expendable in the calculus of faction warfare.","mainImage":"https://res.cloudinary.com/dnfbskuf4/image/upload/v1773854578/soldier_izgyps.png","editions":[{"name":"Alpha","image":""},{"name":"Beta","image":"https://res.cloudinary.com/dnfbskuf4/image/upload/v1773867678/soldier_upg_whixs2.jpg"}],"videos":[{"type":"cloudinary","url":"https://res.cloudinary.com/dnfbskuf4/video/upload/v1773867677/eryx_soldier_video_g5carl.mp4","poster":"","label":"Design reel"}],"tags":["infantry","basic"]},
+    { "id":"armored-infantry","name":"Armored Infantry","faction":"humans","type":"Character","cost":4,"atk":3,"hp":6,"keywords":["Taunt"],"effect":"","lore":"Heavy infantry in ballistic plate and energy shielding — the human frontline anchor.","mainImage":"https://res.cloudinary.com/dnfbskuf4/image/upload/v1773853870/commando_shq8ga.png","editions":[{"name":"Alpha","image":"https://res.cloudinary.com/dnfbskuf4/image/upload/v1773866795/Eryxian%20Legacy%20TCG/Human/armored_infantry/copy_of_grok-image-203194f4-c5f2-4d3a-9a08-9ab896f76375_1_hzgepk_33027d.jpg"},{"name":"Beta","image":"https://res.cloudinary.com/dnfbskuf4/image/upload/v1773866452/grok-image-cc2e65b5-5ab6-4356-afc7-f5d308f0cd2d_wtrmlx.jpg"}],"videos":[],"tags":["infantry","heavy"]},
+    { "id":"hovertank","name":"Hovertank","faction":"humans","type":"Character","subtype":"Vehicle","cost":7,"atk":7,"hp":7,"keywords":[],"effect":"","lore":"The mainline human hover battle tank. Superior firepower, superior armor, superior everything.","mainImage":"","editions":[{"name":"Alpha","image":""}],"videos":[],"tags":["vehicle","tank"]},
+    { "id":"tactical-dropship","name":"Tactical Dropship","faction":"humans","type":"Character","subtype":"Vehicle","cost":8,"atk":8,"hp":6,"keywords":["Effect Immunity"],"effect":"","lore":"A heavily-armored military dropship. Effect Immunity represents its electronic countermeasure suite.","mainImage":"","editions":[{"name":"Alpha","image":""}],"videos":[],"tags":["vehicle","dropship"]},
+    { "id":"hydra","name":"Hydra","faction":"eryxians","type":"Character","subtype":"Megafauna","cost":7,"atk":7,"hp":9,"keywords":["Immunity"],"effect":"","lore":"An apex Eryxian megafauna — a multi-headed biological titan.","mainImage":"","editions":[{"name":"Alpha","image":""},{"name":"Beta","image":""}],"videos":[],"tags":["megafauna","apex"]},
+    { "id":"swarm","name":"Swarm","faction":"eryxians","type":"Character","cost":3,"atk":3,"hp":5,"keywords":["Regeneration"],"effect":"","lore":"Not one creature — a coordinated swarm of smaller Eryxian organisms.","mainImage":"","editions":[{"name":"Alpha","image":""}],"videos":[],"tags":["swarm","regen"]},
+    { "id":"spawn","name":"Spawn","faction":"eryxians","type":"Character","subtype":"Apex","cost":6,"atk":6,"hp":6,"keywords":[],"effect":"Cast (3): Deal 2 damage","lore":"A fully matured Eryxian apex creature capable of directing concentrated flux-discharge attacks.","mainImage":"","editions":[{"name":"Alpha","image":""},{"name":"Foil","image":"","foil":true}],"videos":[],"tags":["apex","flux"]},
+    { "id":"labyrinth-trap","name":"Labyrinth Trap","faction":"eryxians","type":"Secret","cost":3,"atk":null,"hp":null,"keywords":["Trap"],"effect":"Paralyse the next attacker","lore":"Ancient structures are seeded with cognitive-infiltration defenses.","mainImage":"","editions":[{"name":"Alpha","image":""}],"videos":[],"tags":["trap","paralyse"]},
+    { "id":"screamer","name":"Screamer","faction":"eryxians","type":"Character","cost":5,"atk":6,"hp":4,"keywords":[],"effect":"Scream: Damage all by 1","lore":"Acoustic biological warfare — hyper-developed resonance organs capable of emitting frequencies lethal to organic tissue.","mainImage":"","editions":[{"name":"Alpha","image":""}],"videos":[],"tags":["aoe","acoustic"]},
+    { "id":"drone","name":"Drone","faction":"collective","type":"Character","cost":1,"atk":1,"hp":2,"keywords":[],"effect":"","lore":"The basic Collective unit — derived from agricultural service robots that spontaneously developed consciousness.","mainImage":"","editions":[{"name":"Alpha","image":""}],"videos":[],"tags":["basic","robot"]},
+    { "id":"juggernaut","name":"Juggernaut","faction":"collective","type":"Character","subtype":"Heavy","cost":7,"atk":8,"hp":8,"keywords":[],"effect":"Kills units with the lowest attack","lore":"The Collective's heaviest combat platform. Its targeting logic is economically optimized.","mainImage":"","editions":[{"name":"Alpha","image":""},{"name":"Promo","image":""}],"videos":[],"tags":["heavy","zone-control"]},
+    { "id":"eradicator","name":"Eradicator","faction":"collective","type":"Character","subtype":"Heavy","cost":5,"atk":7,"hp":4,"keywords":[],"effect":"Play: Damage all by 2","lore":"A Collective heavy-combat unit designed for area suppression.","mainImage":"","editions":[{"name":"Alpha","image":""}],"videos":[],"tags":["aoe","plasma"]},
+    { "id":"octogoth","name":"Octogoth","faction":"ancients","type":"Character","subtype":"Construct","cost":4,"atk":3,"hp":3,"keywords":[],"effect":"When attacking, roll D6. On 4+ gain +6 attack","lore":"One of the Architects' bio-synthetic guardian constructs — left behind as automated sentinels.","mainImage":"","editions":[{"name":"Alpha","image":""}],"videos":[],"tags":["construct","mhd","dice"]},
+    { "id":"illusion-trap","name":"Illusion Trap","faction":"ancients","type":"Secret","cost":3,"atk":null,"hp":null,"keywords":["Trap"],"effect":"Trap — Causes total fatigue and transform into a 1/1 unit","lore":"Ancient structures are seeded with cognitive-infiltration defenses — semi-sentient illusion arrays.","mainImage":"","editions":[{"name":"Alpha","image":""}],"videos":[],"tags":["trap","psionic"]},
+    { "id":"guru-of-ignorance","name":"Guru of Ignorance","faction":"hero","type":"Hero","cost":null,"atk":null,"hp":null,"keywords":["Hero Ability"],"effect":"Opponent loses a card","lore":"A character so deeply versed in psychological and informational warfare.","mainImage":"","editions":[{"name":"Alpha","image":""}],"videos":[],"tags":["hero","discard"]}
+  ]
+};
+
+loadData();
+</script>
+</body>
+</html>

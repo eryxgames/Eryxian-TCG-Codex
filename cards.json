@@ -1,0 +1,414 @@
+{
+  "meta": {
+    "version": "1.0",
+    "title": "Eryxian Legacy TCG — Card Codex",
+    "updated": "2026-03-19",
+    "author": "Daniel Sandner",
+    "description": "Full card database for Eryxian Legacy TCG"
+  },
+  "factions": {
+    "humans":     { "label": "Humans",      "color": "#4a90d9", "accent": "#3a7acc" },
+    "eryxians":   { "label": "Eryxians",    "color": "#3aaa50", "accent": "#2d8a40" },
+    "collective": { "label": "Collective",  "color": "#cc8800", "accent": "#aa7000" },
+    "ancients":   { "label": "Ancients",    "color": "#9a40cc", "accent": "#7a30aa" },
+    "hero":       { "label": "Hero",        "color": "#cc9020", "accent": "#aa7810" },
+    "token":      { "label": "Token",       "color": "#666688", "accent": "#555577" }
+  },
+  "rarities": {
+  "common":    { "label": "Common",    "color": "#888", "order": 1 },
+  "uncommon":  { "label": "Uncommon",  "color": "#4a9", "order": 2 },
+  "rare":      { "label": "Rare",      "color": "#4a8fd9", "order": 3 },
+  "mythic":    { "label": "Mythic",    "color": "#cc6020", "order": 4 },
+  "legendary": { "label": "Legendary", "color": "#cc9020", "order": 5 }
+  },
+  "cards": [
+    {
+      "id": "armored-commander",
+      "rarity": "common",
+      "name": "Armored Commander",
+      "faction": "humans",
+      "type": "Character",
+      "subtype": "",
+      "cost": 4, "atk": 3, "hp": 5,
+      "keywords": ["Defender"],
+      "effect": "",
+      "lore": "A field commander in TAM or Stellar Concord heavy combat armor. The Defender keyword is not defensive cowardice — it is tactical positioning. Commanders hold the line while coordinating flanking maneuvers. Their armor suits integrate heads-up tactical overlays, squad-link comms, and reactive plating.",
+      "mainImage": "https://res.cloudinary.com/dnfbskuf4/image/upload/v1773960575/board_juggernaut_c012hn.png",
+      "frame": "",
+      "editions": [
+        { "name": "Alpha", "image": "https://res.cloudinary.com/dnfbskuf4/image/upload/v1773961196/juggernaut_vugsc7.png", "foil": false },
+        { "name": "Beta",  "image": "", "foil": false }
+      ],
+      "videos": [],
+      "tags": ["commander", "armor", "tam"]
+    },
+    {
+      "id": "hovertank",
+      "rarity": "common",
+      "name": "Hovertank",
+      "faction": "humans",
+      "type": "Character",
+      "subtype": "Vehicle",
+      "cost": 7, "atk": 7, "hp": 7,
+      "keywords": [],
+      "effect": "",
+      "lore": "The mainline human hover battle tank — no special abilities because it doesn't need any. This is the baseline juggernaut of human armored doctrine. Superior firepower, superior armor, superior everything. When a Hovertank enters the battlefield, it is a statement: we have the industrial capacity to deploy the best.",
+      "mainImage": "https://res.cloudinary.com/dnfbskuf4/image/upload/v1773960679/e_hovertank_board_sa2wqh.png",
+      "frame": "",
+      "editions": [
+        { "name": "Alpha", "image": "", "foil": false }
+      ],
+      "videos": [],
+      "tags": ["vehicle", "tank", "heavy"]
+    },
+    {
+      "id": "assault-hovertank",
+      "name": "Assault Hovertank",
+      "faction": "humans",
+      "type": "Character",
+      "subtype": "Vehicle",
+      "cost": 4, "atk": 4, "hp": 2,
+      "keywords": ["Fury"],
+      "effect": "",
+      "lore": "Human hover-armor is a staple of TAM rapid assault doctrine. Low HP represents its vulnerability to flanking and anti-armor munitions — it's fast and devastating but not built to absorb punishment. Fury captures the doctrine perfectly: the Assault Hovertank rushes in before defenders can reposition.",
+      "mainImage": "https://res.cloudinary.com/dnfbskuf4/image/upload/v1773960558/assaulthovertank_board_keijo7.png",
+      "frame": "",
+      "editions": [
+        { "name": "Alpha", "image": "", "foil": false }
+      ],
+      "videos": [],
+      "tags": ["vehicle", "tank", "fast"]
+    },
+    {
+      "id": "soldier",
+      "name": "Soldier",
+      "faction": "humans",
+      "type": "Character",
+      "subtype": "",
+      "cost": 1, "atk": 1, "hp": 1,
+      "keywords": [],
+      "effect": "Death: Draw a card",
+      "lore": "The basic human grunt — not special, not exceptional, entirely expendable in the calculus of faction warfare. The Death trigger represents a grim truth: in human military culture, the death of a soldier generates paperwork, battlefield reports, tactical data. Every fallen soldier feeds the machine.",
+      "mainImage": "https://res.cloudinary.com/dnfbskuf4/image/upload/v1773960581/board_soldier_a8uokz.png",
+      "frame": "",
+      "editions": [
+        { "name": "Alpha", "image": "", "foil": false },
+        { "name": "Beta",  "image": "", "foil": false }
+      ],
+      "videos": [
+        { "type": "cloudinary", "url": "https://res.cloudinary.com/dnfbskuf4/video/upload/v1773867677/eryx_soldier_video_g5carl.mp4", "poster": "", "label": "Design reel" }
+      ],
+      "tags": ["infantry", "basic", "death-trigger"]
+    },
+    {
+      "id": "tactical-dropship",
+      "name": "Tactical Dropship",
+      "faction": "humans",
+      "type": "Character",
+      "subtype": "Vehicle",
+      "cost": 8, "atk": 8, "hp": 6,
+      "keywords": ["Effect Immunity"],
+      "effect": "",
+      "lore": "A heavily-armored military dropship operating within atmosphere. Effect Immunity represents its electronic countermeasure suite: hardened against EMP, psionic disruption, Eryxian flux effects, Collective override signals. The TAM and Stellar Concord deploy these for high-value extractions and force projection.",
+      "mainImage": "https://res.cloudinary.com/dnfbskuf4/image/upload/v1773960842/tacticaldropship_board_pfddsp.png",
+      "frame": "",
+      "editions": [
+        { "name": "Alpha", "image": "", "foil": false }
+      ],
+      "videos": [],
+      "tags": ["vehicle", "dropship", "ecm"]
+    },
+    {
+      "id": "armored-infantry",
+      "name": "Armored Infantry",
+      "faction": "humans",
+      "type": "Character",
+      "subtype": "",
+      "cost": 4, "atk": 3, "hp": 6,
+      "keywords": ["Taunt"],
+      "effect": "",
+      "lore": "Heavy infantry in ballistic plate and energy shielding — the human frontline anchor. Taunt represents their trained role: drawing enemy fire so lighter, faster units can maneuver. Armored Infantry don't flinch, don't retreat, and are armored enough to survive what hits them.",
+      "mainImage": "https://res.cloudinary.com/dnfbskuf4/image/upload/v1773960570/board_commando_btjhwx.png",
+      "frame": "",
+      "editions": [
+        { "name": "Alpha", "image": "https://res.cloudinary.com/dnfbskuf4/image/upload/v1773866795/Eryxian%20Legacy%20TCG/Human/armored_infantry/copy_of_grok-image-203194f4-c5f2-4d3a-9a08-9ab896f76375_1_hzgepk_33027d.jpg", "foil": false },
+        { "name": "Beta",  "image": "https://res.cloudinary.com/dnfbskuf4/image/upload/v1773866452/grok-image-cc2e65b5-5ab6-4356-afc7-f5d308f0cd2d_wtrmlx.jpg", "foil": false }
+      ],
+      "videos": [],
+      "tags": ["infantry", "heavy", "frontline"]
+    },
+    {
+      "id": "hydra",
+      "name": "Hydra",
+      "faction": "eryxians",
+      "type": "Character",
+      "subtype": "Megafauna",
+      "cost": 7, "atk": 7, "hp": 9,
+      "keywords": ["Immunity"],
+      "effect": "",
+      "lore": "An apex Eryxian megafauna — a multi-headed biological titan that has evolved to survive every environmental threat Eryxia can produce: radiation, extreme temperature flux, chemical corrosion, biological toxins, and physical trauma. Immunity reflects its biological redundancy: multiple nervous systems, distributed vital organs.",
+      "mainImage": "https://res.cloudinary.com/dnfbskuf4/image/upload/v1773960960/hydra_stgj42.png",
+      "frame": "",
+      "editions": [
+        { "name": "Alpha", "image": "", "foil": false },
+        { "name": "Beta",  "image": "", "foil": false }
+      ],
+      "videos": [],
+      "tags": ["megafauna", "apex", "multi-head"]
+    },
+    {
+      "id": "swarm",
+      "name": "Swarm",
+      "faction": "eryxians",
+      "type": "Character",
+      "subtype": "",
+      "cost": 3, "atk": 3, "hp": 5,
+      "keywords": ["Regeneration"],
+      "effect": "",
+      "lore": "Not one creature — a coordinated swarm of smaller Eryxian organisms operating as a collective biological unit. Regeneration is biologically accurate: individual organisms in the swarm die constantly, but the swarm continuously replenishes from the surrounding environment. You cannot kill a Swarm by attrition alone.",
+      "mainImage": "https://res.cloudinary.com/dnfbskuf4/image/upload/v1773960753/e_swarm_board_py9nfn.png",
+      "frame": "",
+      "editions": [
+        { "name": "Alpha", "image": "", "foil": false }
+      ],
+      "videos": [],
+      "tags": ["swarm", "regen", "collective-bio"]
+    },
+    {
+      "id": "spawn",
+      "name": "Spawn",
+      "faction": "eryxians",
+      "type": "Character",
+      "subtype": "Apex",
+      "cost": 6, "atk": 6, "hp": 6,
+      "keywords": [],
+      "effect": "Cast (3): Deal 2 damage",
+      "lore": "A fully matured Eryxian apex creature — the end result of the Spawner/Spawn Egg development cycle. Spawns are the apex individuals of a particular Eryxian clade: massive, biologically versatile, capable of directing concentrated flux-discharge attacks.",
+      "mainImage": "https://res.cloudinary.com/dnfbskuf4/image/upload/v1773960755/spawn_board_sadc08.png",
+      "frame": "",
+      "editions": [
+        { "name": "Alpha", "image": "", "foil": false },
+        { "name": "Foil",  "image": "", "foil": true }
+      ],
+      "videos": [{ "type": "cloudinary", "url": "https://res.cloudinary.com/dnfbskuf4/video/upload/v1773965021/spawn-video_ewfoqp.mp4", "poster": "", "label": "Design reel" }],
+      "tags": ["apex", "flux", "cast"]
+    },
+    {
+      "id": "bloodfly",
+      "name": "Bloodfly",
+      "faction": "eryxians",
+      "type": "Character",
+      "subtype": "",
+      "cost": 2, "atk": 1, "hp": 1,
+      "keywords": [],
+      "effect": "Play: Deal 1 damage",
+      "lore": "The basic unit of Eryxian swarm ecology — a rather small, aggressive flying organism that feeds on radiation-rich biological matter. Bloodflies are everywhere on Eryxia and in any environment where Eryxian contamination has spread. They are individually trivial but collectively devastating.",
+      "mainImage": "https://res.cloudinary.com/dnfbskuf4/image/upload/v1773910805/board_bloodflynew_gmftiu.png",
+      "frame": "",
+      "editions": [
+        { "name": "Alpha", "image": "", "foil": false }
+      ],
+      "videos": [],
+      "tags": ["swarm", "insect", "play-trigger"]
+    },
+    {
+      "id": "screamer",
+      "name": "Screamer",
+      "faction": "eryxians",
+      "type": "Character",
+      "subtype": "",
+      "cost": 5, "atk": 6, "hp": 4,
+      "keywords": [],
+      "effect": "Scream: Damage all by 1",
+      "lore": "Acoustic biological warfare — the Screamer is an Eryxian organism with hyper-developed resonance organs capable of emitting frequencies lethal to organic tissue. The Screamer is the biosphere's answer to area-effect pressure weapons: it damages everything in range, friend and foe alike.",
+      "mainImage": "https://res.cloudinary.com/dnfbskuf4/image/upload/v1773960581/board_screamer_st3rte.png",
+      "frame": "",
+      "editions": [
+        { "name": "Alpha", "image": "", "foil": false }
+      ],
+      "videos": [],
+      "tags": ["aoe", "acoustic", "fragile"]
+    },
+    {
+      "id": "nightfeeder",
+      "name": "Nightfeeder",
+      "faction": "eryxians",
+      "type": "Character",
+      "subtype": "Predator",
+      "cost": 6, "atk": 5, "hp": 5,
+      "keywords": ["Trample"],
+      "effect": "",
+      "lore": "A nocturnal Eryxian ambush predator that evolved specifically for the periods when Eryxia's triple-sun arrangement creates true darkness. Trample represents its massive bulk and kinetic hunting style: it does not stop for single prey, it runs through, grabbing and consuming as it passes.",
+      "mainImage": "https://res.cloudinary.com/dnfbskuf4/image/upload/v1773960839/nightfeeder_keuuyr.png",
+      "frame": "",
+      "editions": [
+        { "name": "Alpha", "image": "", "foil": false }
+      ],
+      "videos": [],
+      "tags": ["predator", "nocturnal", "trample"]
+    },
+    {
+      "id": "labyrinth-trap",
+      "name": "Labyrinth Trap",
+      "faction": "eryxians",
+      "type": "Secret",
+      "subtype": "",
+      "cost": 3, "atk": null, "hp": null,
+      "keywords": ["Trap"],
+      "effect": "Paralyse the next attacker",
+      "lore": "Ancient structures are seeded with cognitive-infiltration defenses — chambers that contract, floors that exude paralytic bio-compounds, walls that close. The Labyrinth Trap is the Labyrinth itself defending against intrusion — the organism's immune response to a foreign attacker.",
+      "mainImage": "",
+      "frame": "",
+      "editions": [
+        { "name": "Alpha", "image": "", "foil": false }
+      ],
+      "videos": [],
+      "tags": ["trap", "paralyse", "secret"]
+    },
+    {
+      "id": "drone",
+      "name": "Drone",
+      "faction": "collective",
+      "type": "Character",
+      "subtype": "",
+      "cost": 1, "atk": 1, "hp": 2,
+      "keywords": [],
+      "effect": "",
+      "lore": "The basic Collective unit — derived from the agricultural service robots that spontaneously developed consciousness. Drones are not sophisticated; they carry the essential processing required for their original function plus the minimal combat adaptation the Collective added.",
+      "mainImage": "https://res.cloudinary.com/dnfbskuf4/image/upload/v1773960595/e_aerial_drone_board_zwuo8s.png",
+      "frame": "",
+      "editions": [
+        { "name": "Alpha", "image": "", "foil": false }
+      ],
+      "videos": [],
+      "tags": ["basic", "expendable", "robot"]
+    },
+    {
+      "id": "juggernaut",
+      "name": "Juggernaut",
+      "faction": "collective",
+      "type": "Character",
+      "subtype": "Heavy",
+      "cost": 7, "atk": 8, "hp": 8,
+      "keywords": [],
+      "effect": "Kills units with the lowest attack",
+      "lore": "The Collective's heaviest combat platform — a unit so large and heavily armored that it has graduated from individual combat to zone control. Its targeting logic is economically optimized: it prioritizes the lowest-attack targets because eliminating support units is more efficient than trading blows with equivalents.",
+      "mainImage": "https://res.cloudinary.com/dnfbskuf4/image/upload/v1773960677/juggernautgiant_board_xjnkp1.png",
+      "frame": "",
+      "editions": [
+        { "name": "Alpha", "image": "", "foil": false },
+        { "name": "Promo", "image": "", "foil": false }
+      ],
+      "videos": [],
+      "tags": ["heavy", "robot", "zone-control"]
+    },
+    {
+      "id": "eradicator",
+      "name": "Eradicator",
+      "faction": "collective",
+      "type": "Character",
+      "subtype": "Heavy",
+      "cost": 5, "atk": 7, "hp": 4,
+      "keywords": [],
+      "effect": "Play: Damage all by 2",
+      "lore": "A Collective heavy-combat unit designed for area suppression. Its primary weapon system is a rapid-discharge plasma array that generates an area-effect burst on deployment. The Collective doesn't do subtlety with Eradicators: they are deployed specifically to make every square meter of the battlefield dangerous.",
+      "mainImage": "https://res.cloudinary.com/dnfbskuf4/image/upload/v1773960878/eradicator_board_rg1ydp.png",
+      "frame": "",
+      "editions": [
+        { "name": "Alpha", "image": "", "foil": false }
+      ],
+      "videos": [],
+      "tags": ["aoe", "plasma", "entry-effect"]
+    },
+    {
+      "id": "recyclator",
+      "name": "Recyclator",
+      "faction": "collective",
+      "type": "Character",
+      "subtype": "",
+      "cost": 4, "atk": 4, "hp": 4,
+      "keywords": [],
+      "effect": "Whenever another character dies, draw a card",
+      "lore": "A Collective unit that is perpetually networked to the death-telemetry feeds of all units in range — it processes battlefield deaths as they happen and extracts tactical intelligence in real time. Every piece of data generated by any unit's destruction feeds its analysis.",
+      "mainImage": "https://res.cloudinary.com/dnfbskuf4/image/upload/v1773960838/recycler_board_wyygoh.png",
+      "frame": "",
+      "editions": [
+        { "name": "Alpha", "image": "", "foil": false }
+      ],
+      "videos": [],
+      "tags": ["draw", "death-trigger", "support"]
+    },
+    {
+      "id": "octogoth",
+      "name": "Octogoth",
+      "faction": "ancients",
+      "type": "Character",
+      "subtype": "Construct",
+      "cost": 4, "atk": 3, "hp": 3,
+      "keywords": [],
+      "effect": "When attacking, roll D6. On 4+ gain +6 attack",
+      "lore": "One of the Architects' bio-synthetic guardian constructs — left behind as automated sentinels in Ancient labyrinths and derelict Dyson megastructures. Its eight limbs contain stored MHD-flux capacitors that discharge unpredictably, spiking its destructive output when the local magnetohydrodynamic field aligns.",
+      "mainImage": "https://res.cloudinary.com/dnfbskuf4/image/upload/v1773960697/octogoth_board_o1pdf1.png",
+      "frame": "",
+      "editions": [
+        { "name": "Alpha", "image": "", "foil": false }
+      ],
+      "videos": [],
+      "tags": ["construct", "mhd", "dice"]
+    },
+    {
+      "id": "illusion-trap",
+      "name": "Illusion Trap",
+      "faction": "ancients",
+      "type": "Secret",
+      "subtype": "",
+      "cost": 3, "atk": null, "hp": null,
+      "keywords": ["Trap"],
+      "effect": "Trap — Causes total fatigue and transform into a 1/1 unit",
+      "lore": "Ancient structures are seeded with cognitive-infiltration defenses — semi-sentient illusion arrays that project false realities into an intruder's neural architecture. The fatigue is real and the transformation represents psychological and physiological reduction — the victim, convinced they are broken, becomes broken.",
+      "mainImage": "https://res.cloudinary.com/dnfbskuf4/image/upload/v1773960576/board_pyramid_f0latk.png",
+      "frame": "",
+      "editions": [
+        { "name": "Alpha", "image": "", "foil": false }
+      ],
+      "videos": [],
+      "tags": ["trap", "fatigue", "transform", "psionic"]
+    },
+    {
+      "id": "guru-of-ignorance",
+      "name": "Guru of Ignorance",
+      "faction": "hero",
+      "type": "Hero",
+      "subtype": "",
+      "cost": null, "atk": null, "hp": null,
+      "keywords": ["Hero Ability"],
+      "effect": "Opponent loses a card",
+      "lore": "A character so deeply versed in psychological and informational warfare that they can cause an enemy to lose critical knowledge — not through destruction but through suppression. The Whisperer represents the Eryxian universe's tradition of information as a weapon.",
+      "mainImage": "",
+      "frame": "",
+      "editions": [
+        { "name": "Alpha", "image": "", "foil": false }
+      ],
+      "videos": [],
+      "tags": ["hero", "discard", "information-warfare"]
+    },
+    {
+      "id": "beta-ripper",
+      "name": "Beta Ripper",
+      "faction": "token",
+      "type": "Character",
+      "subtype": "Token",
+      "cost": 1, "atk": 1, "hp": 1,
+      "keywords": [],
+      "effect": "",
+      "lore": "A pack-member Xenohyena — smaller than the Alpha Ripper, operating as a pack hunter under its leader's pheromone direction. Individually weak, contextually dangerous as part of an Alpha-anchored pack.",
+      "mainImage": "https://res.cloudinary.com/dnfbskuf4/image/upload/v1773960563/board_beta_dn9xvs.png",
+      "frame": "",
+      "editions": [
+        { "name": "Alpha", "image": "", "foil": false }
+      ],
+      "videos": [],
+      "tags": ["token", "pack", "xenohyena"]
+    }
+  ]
+}
